@@ -1,0 +1,143 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #222428;
+}
+
+.no-data {
+  color: red;
+  font-weight: bold;
+  font-size: 40px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.none {
+  display: none !important;
+}
+
+.container {
+  max-width: 700px;
+  min-width: 300px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.header__title {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  color: #fff;
+}
+
+.header__wrapper {
+  display: flex;
+  padding: 20px 0;
+  gap: 10px;
+}
+.header__wrapper button {
+  flex-basis: 15%;
+  height: 104px;
+  cursor: pointer;
+  border-radius: 4px;
+  background-color: #366603;
+  color: #fff;
+  border: none;
+  transition: all 0.3s;
+}
+.header__wrapper button:hover {
+  background-color: #9aff2d;
+  color: #474306;
+}
+
+.header__wrapper-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-basis: 85%;
+}
+.header__wrapper-content input {
+  height: 40px;
+  padding-left: 20px;
+  border-radius: 4px;
+}
+.header__wrapper-content div {
+  display: flex;
+  gap: 10px;
+}
+.header__wrapper-content div textarea {
+  width: 100%;
+  padding: 10px 20px;
+  resize: vertical;
+  border-radius: 4px;
+}
+.header__wrapper-content div select {
+  width: 40%;
+  height: 54px;
+  border-radius: 4px;
+}
+
+.main__search {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.main__search select {
+  flex-basis: 30%;
+  border-radius: 4px;
+}
+.main__search div {
+  display: flex;
+  position: relative;
+  justify-content: space-between;
+  flex-basis: 70%;
+}
+.main__search div input {
+  height: 40px;
+  padding-left: 20px;
+  border-radius: 4px;
+  border: none;
+  width: 100%;
+}
+.main__search div button {
+  position: absolute;
+  right: 5px;
+  top: 25%;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.list__tasks div {
+  background-color: #fff;
+  border-radius: 4px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.list__tasks div button {
+  width: 20px;
+  height: 20px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+.list__tasks div ul {
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.list__tasks div ul li h3 {
+  font-size: 30px;
+}
+.list__tasks div ul li p {
+  white-space: pre-wrap;
+  max-width: 500px;
+}/*# sourceMappingURL=style.css.map */

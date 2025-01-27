@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TodoList</title>
+    <link rel="stylesheet" href="../css/style.css" />
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <h1 class="header__title">Task List</h1>
+        <form id="header__form" class="header__wrapper">
+          <div class="header__wrapper-content">
+            <input
+              required
+              placeholder="Название задачи"
+              type="text"
+              id="task__input"
+            />
+            <div>
+              <textarea
+                required
+                placeholder="Описание задачи"
+                name=""
+                id="task__textarea"
+              ></textarea>
+              <select name="" id="task__select">
+                <option value="Open">Open</option>
+                <option value="Close">Close</option>
+                <option value="Critical">Critical</option>
+              </select>
+            </div>
+          </div>
+          <button>Добавить</button>
+        </form>
+      </div>
+    </header>
+
+    <main>
+      <div class="container">
+        
+        <form id="main__search" class="main__search none">
+          <select name="" id="search__select">
+            <option value="All">All</option>
+            <option value="Open">Open</option>
+            <option value="Close">Close</option>
+            <option value="Critical">Critical</option>
+          </select>
+          <div>
+            <input placeholder="Поиск..." id="search__input" type="text">
+            <button id="search__button">🔍</button>
+          </div>
+        </form>
+
+        <ul class="list__tasks" id="list__tasks">
+         
+        </ul>
+
+      </div>
+    </main>
+    <script src="../js/app.js"></script>
+  </body>
+</html>
