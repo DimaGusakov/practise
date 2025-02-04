@@ -1,140 +1,158 @@
 const headerForm = document.getElementById("header__form");
-const listTasks = document.getElementById("list__tasks");
 const taskInput = document.getElementById("task__input");
 const taskTextarea = document.getElementById("task__textarea");
 const taskSelect = document.getElementById("task__select");
+const listTasks = document.getElementById("list__tasks");
 
-const mainSearch = document.getElementById('main__search')
+const mainSearch = document.getElementById("main__search");
 
-const searchSelect = document.getElementById("search__select");
 const searchInput = document.getElementById("search__input");
-const searchButton = document.getElementById("search__button");
+const searchSelect = document.getElementById("search__select");
+const completedCheckbox = document.getElementById("completedCheckbox");
 
+const editForm = document.getElementById("editForm");
+const editTitle = document.getElementById("editTitle");
+const editDescription = document.getElementById("editDescription");
+const editStatus = document.getElementById("editStatus");
+const cancelButton = document.querySelector(".modal__close");
 
-const notes = [
-  {
-    title: "Разработка функции поиска",
-    subtitle:
-      "Добавить поле ввода для поиска и реализовать функцию фильтрации задач по ключевым словам. Поле ввода должно быть стилизовано в соответствии с общим дизайном приложения. Функция поиска должна быть нечувствительна к регистру и обновлять список задач в реальном времени при вводе ключевых слов.",
-    status: "Open",
-    dateString: "27.01.2025, 10:00:00",
-  },
-  {
-    title: "Тестирование функции поиска",
-    subtitle:
-      "Провести тестирование функции поиска на различных устройствах и браузерах. Убедиться, что функция поиска работает корректно при вводе различных ключевых слов и символов. Проверить производительность функции поиска и убедиться, что она не влияет на общую производительность приложения.",
-    status: "Critical",
-    dateString: "27.01.2025, 14:30:00",
-  },
-  {
-    title: "Исправление багов",
-    subtitle:
-      "Исправить ошибки, выявленные в процессе тестирования функции поиска. Убедиться, что все баги исправлены и функция поиска работает корректно. Провести повторное тестирование после исправления багов, чтобы убедиться, что все проблемы решены.",
-    status: "Close",
-    dateString: "27.01.2025, 09:15:00",
-  },
-  {
-    title: "Обновление документации",
-    subtitle:
-      "Обновить документацию по использованию функции поиска и добавить примеры использования. Убедиться, что документация понятна и содержит все необходимые сведения для пользователей. Провести рецензирование документации среди команды, чтобы убедиться, что она полная и точная.",
-    status: "Open",
-    dateString: "27.01.2025, 11:45:00",
-  },
-  {
-    title: "Оптимизация производительности",
-    subtitle:
-      "Провести анализ производительности приложения и оптимизировать функцию поиска для улучшения скорости работы. Убедиться, что функция поиска работает быстро и эффективно даже при большом количестве задач. Провести тестирование производительности после оптимизации, чтобы убедиться, что все изменения положительно влияют на скорость работы приложения.",
-    status: "Critical",
-    dateString: "27.01.2025, 16:20:00",
-  },
-];
+const modal = document.querySelector(".modal-overlay");
+let tasks = [];
 
+let k = -1;
 
-
-const render = (filteredNotes = notes) => {
-  listTasks.innerHTML = "";
-  if (filteredNotes.length === 0 && notes.length > 0) {
-    listTasks.insertAdjacentHTML(
-      "beforeend",
-      `<p class="no-data">Таких данных нет</p>`
-    );
-  } else {
-    for (let i = 0; i < filteredNotes.length; i++) {
-      listTasks.insertAdjacentHTML(
-        "beforeend",
-        getNoteTemplate(filteredNotes[i], i)
-      );
-    }
-  }
-  searchVisibility();
+const showFilter = () => {
+  if (tasks.length === 0) mainSearch.classList.add("none");
+  else mainSearch.classList.remove("none");
 };
 
-const getNoteTemplate = (note, index) => {
-  return `
+const createTask = (element) => {
+  const div = document.createElement("div");
+  div.classList.add("list__tasks-item");
+  div.innerHTML = `
+  <ul>
+    <li><h3>${element.title}</h3></li>
+    <li><p>${element.subtitle}</p></li>
+    <li>${element.status}</li>
+    <li>${element.date}</li>
+  </ul>
   <div>
-    <ul>
-      <li><h3>${note.title}</h3></li>
-      <li><p>${note.subtitle}</p></li>
-      <li>${note.status}</span></li>
-      <li>${note.dateString}</li>
-    </ul>
-    <button data-type ="remove" data-index ="${index}">❌</button>
+    <button id="${element.id}" class="edit-btn">✏️</button>
+    <button id="${element.id}" class="delete-btn">❌</button>
   </div>
   `;
-}
-
-const filterNotes = () => {
-  const selectedStatus = searchSelect.value;
-  const searchText = searchInput.value.toLowerCase();
-  return notes.filter((note) => {
-    const matchesStatus =
-      selectedStatus === "All" || note.status === selectedStatus;
-    const matchesText = note.title.toLowerCase().includes(searchText);
-    return matchesStatus && matchesText;
-  });
+  listTasks.appendChild(div);
 };
 
-const searchVisibility = () => {
-  if (notes.length === 0) mainSearch.classList.add("none")
-  else mainSearch.classList.remove("none")
+const render = (arr) => {
+  listTasks.innerHTML = "";
 
+  if (tasks.length === 0) {
+    listTasks.innerHTML = `
+      <p class="no-data">Нет задач</p>
+    `;
+  } else arr.forEach((element) => createTask(element));
+};
+render(tasks);
+
+const noData = (arr) => {
+  if (arr.length === 0) listTasks.innerHTML = `<p class="no-data">Таких данных нет</p>`
 }
-
-render();
 
 headerForm.addEventListener("submit", (e) => {
   e.preventDefault();
-  const currentDate = new Date();
-  const dateString = currentDate.toLocaleString();
-
-  const newNote = {
+  const date = new Date();
+  tasks.push({
     title: taskInput.value,
     subtitle: taskTextarea.value,
     status: taskSelect.value,
-    dateString: dateString,
-  };
+    date: date.toLocaleString(),
+    id: tasks.length,
+  });
+  headerForm.reset();
 
-  notes.push(newNote)
-  render()
-  taskInput.value = ''
-  taskTextarea.value = ''
-  
+  render(tasks);
+  showFilter();
 });
 
-listTasks.addEventListener('click',event => {
-  const index = +(event.target.dataset.index)
-  if (event.target.dataset.type === 'remove'){
-    notes.splice(index, 1)
+listTasks.addEventListener("click", (e) => {
+  if (e.target.classList.contains("delete-btn")) {
+    const id = e.target.id;
+    tasks = tasks.filter((element) => element.id !== +id);
+    render(tasks);
+    showFilter();
+  } else if (e.target.classList.contains("edit-btn")) {
+    const id = +e.target.id;
+    k = id;
+    const edit = tasks.filter((element) => element.id === id)[0];
+    editTitle.value = edit.title;
+    editDescription.value = edit.subtitle;
+    editStatus.value = edit.status;
+    modal.classList.add("active");
+    document.body.classList.add("lock");
   }
-  render()
-})
+});
+showFilter();
 
-
-searchSelect.addEventListener("change", () => {
-  render(filterNotes());
+searchInput.addEventListener("input", (e) => {
+  const { value } = e.target;
+  if (value.length > 2) {
+    const filter = tasks.filter((element) =>
+      element.title.toLowerCase().includes(value.toLowerCase())
+    );
+    render(filter);
+    noData(filter)
+    return;
+  }
+  render(tasks);
 });
 
-mainSearch.addEventListener("submit", (e) => {
+searchSelect.addEventListener("change", (e) => {
+  const { value } = e.target;
+  if (value.toLowerCase() === "all") {
+    render(tasks);
+    return;
+  }
+  const filter = tasks.filter((element) => element.status === value);
+  render(filter);
+  noData(filter);
+});
+
+completedCheckbox.addEventListener("change", () => {
+  if (completedCheckbox.checked) {
+    const filter = tasks.filter(
+      (element) => element.status.toLowerCase() === "close"
+    );
+    render(filter);
+    noData(filter);
+    return;
+  }
+  render(tasks);
+});
+
+const closeModal = () => {
+  modal.classList.remove("active");
+  document.body.classList.remove('lock')
+}
+
+cancelButton.addEventListener("click", () => closeModal());
+
+editForm.addEventListener("submit", (e) => {
   e.preventDefault();
-  render(filterNotes());
+  tasks.forEach((element) => {
+    if (element.id === k) {
+      element.title = editTitle.value;
+      element.subtitle = editDescription.value;
+      element.status = editStatus.value;
+      element.date = new Date().toLocaleString();
+    }
+  });
+  render(tasks);
+  closeModal();
+});
+
+modalOverlay.addEventListener("click", (e) => {
+  if (e.target === modalOverlay) {
+    closeModal();
+  }
 });
