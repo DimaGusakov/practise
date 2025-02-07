@@ -1,25 +1,20 @@
+console.log(localStorage);
 const headerForm = document.getElementById("header__form");
 const taskInput = document.getElementById("task__input");
 const taskTextarea = document.getElementById("task__textarea");
 const taskSelect = document.getElementById("task__select");
 const listTasks = document.getElementById("list__tasks");
-
 const mainSearch = document.getElementById("main__search");
-
 const searchInput = document.getElementById("search__input");
 const searchSelect = document.getElementById("search__select");
 const completedCheckbox = document.getElementById("completedCheckbox");
-
 const editForm = document.getElementById("editForm");
 const editTitle = document.getElementById("editTitle");
 const editDescription = document.getElementById("editDescription");
 const editStatus = document.getElementById("editStatus");
 const cancelButton = document.querySelector(".modal__close");
-
 const modal = document.querySelector(".modal-overlay");
 let tasks = [];
-
-let k = -1;
 
 const showFilter = () => {
   if (tasks.length === 0) mainSearch.classList.add("none");
@@ -46,17 +41,18 @@ const createTask = (element) => {
 
 const render = (arr) => {
   listTasks.innerHTML = "";
-
-  if (tasks.length === 0) {
-    listTasks.innerHTML = `
-      <p class="no-data">Нет задач</p>
-    `;
+  if (arr.length === 0) {
+    if (arr === tasks) {
+      listTasks.innerHTML = `<p class="no-data">Нет задач</p>`;
+    } else {
+      listTasks.innerHTML = `<p class="no-data">Таких данных нет</p>`;
+    }
   } else arr.forEach((element) => createTask(element));
 };
-render(tasks);
 
-const noData = (arr) => {
-  if (arr.length === 0) listTasks.innerHTML = `<p class="no-data">Таких данных нет</p>`
+if (localStorage.tasks) {
+  tasks = JSON.parse(localStorage.tasks);
+  render(tasks);
 }
 
 headerForm.addEventListener("submit", (e) => {
@@ -70,7 +66,7 @@ headerForm.addEventListener("submit", (e) => {
     id: tasks.length,
   });
   headerForm.reset();
-
+  localStorage.tasks = JSON.stringify(tasks);
   render(tasks);
   showFilter();
 });
@@ -79,15 +75,17 @@ listTasks.addEventListener("click", (e) => {
   if (e.target.classList.contains("delete-btn")) {
     const id = e.target.id;
     tasks = tasks.filter((element) => element.id !== +id);
+    localStorage.tasks = JSON.stringify(tasks);
     render(tasks);
     showFilter();
   } else if (e.target.classList.contains("edit-btn")) {
     const id = +e.target.id;
-    k = id;
-    const edit = tasks.filter((element) => element.id === id)[0];
-    editTitle.value = edit.title;
-    editDescription.value = edit.subtitle;
-    editStatus.value = edit.status;
+    const editTask = tasks.find((element) => element.id === id);
+    if (!editTask) return;
+    editForm.currentTaskId = id;
+    editTitle.value = editTask.title;
+    editDescription.value = editTask.subtitle;
+    editStatus.value = editTask.status;
     modal.classList.add("active");
     document.body.classList.add("lock");
   }
@@ -101,7 +99,6 @@ searchInput.addEventListener("input", (e) => {
       element.title.toLowerCase().includes(value.toLowerCase())
     );
     render(filter);
-    noData(filter)
     return;
   }
   render(tasks);
@@ -115,7 +112,6 @@ searchSelect.addEventListener("change", (e) => {
   }
   const filter = tasks.filter((element) => element.status === value);
   render(filter);
-  noData(filter);
 });
 
 completedCheckbox.addEventListener("change", () => {
@@ -124,7 +120,6 @@ completedCheckbox.addEventListener("change", () => {
       (element) => element.status.toLowerCase() === "close"
     );
     render(filter);
-    noData(filter);
     return;
   }
   render(tasks);
@@ -132,27 +127,30 @@ completedCheckbox.addEventListener("change", () => {
 
 const closeModal = () => {
   modal.classList.remove("active");
-  document.body.classList.remove('lock')
-}
+  document.body.classList.remove("lock");
+  editForm.currentTaskId = null;
+};
 
 cancelButton.addEventListener("click", () => closeModal());
 
 editForm.addEventListener("submit", (e) => {
   e.preventDefault();
+  const id = editForm.currentTaskId;
   tasks.forEach((element) => {
-    if (element.id === k) {
+    if (element.id === id) {
       element.title = editTitle.value;
       element.subtitle = editDescription.value;
       element.status = editStatus.value;
       element.date = new Date().toLocaleString();
     }
   });
+  localStorage.tasks = JSON.stringify(tasks);
   render(tasks);
   closeModal();
 });
 
-modalOverlay.addEventListener("click", (e) => {
-  if (e.target === modalOverlay) {
+modal.addEventListener("click", (e) => {
+  if (e.target === modal) {
     closeModal();
   }
 });
